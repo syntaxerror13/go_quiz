@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -45,7 +46,11 @@ func quiz(records [][]string, timer *time.Timer) (int, int) {
 }
 
 func main() {
-	f, err := os.Open("problems.csv")
+	csvFilename := flag.String("csv", "problems.csv", "a csv file in the format of 'question,answer'")
+	timeLimit := flag.Int("limit", 30, "the time limit for the quiz in seconds")
+	flag.Parse()
+
+	f, err := os.Open(*csvFilename)
 	check(err)
 	r := io.Reader(f)
 	reader := csv.NewReader(r)
@@ -55,7 +60,7 @@ func main() {
 
 	total := len(records)
 
-	timer := time.NewTimer(10 * time.Second)
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 	defer timer.Stop()
 
 	hits, responses := quiz(records, timer)
