@@ -10,12 +10,6 @@ import (
 	"time"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
 func quiz(records [][]string, timer *time.Timer) (int, int) {
 	var hits, responses int = 0, 0
 
@@ -53,12 +47,18 @@ func main() {
 	flag.Parse()
 
 	f, err := os.Open(*csvFilename)
-	check(err)
+	if err != nil {
+		fmt.Println("Cannot open CSV file")
+		os.Exit(1)
+	}
 	r := io.Reader(f)
 	reader := csv.NewReader(r)
 
 	records, err := reader.ReadAll()
-	check(err)
+	if err != nil {
+		fmt.Println("Cannot read CSV file")
+		os.Exit(1)
+	}
 
 	total := len(records)
 
